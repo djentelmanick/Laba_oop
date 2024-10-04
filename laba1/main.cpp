@@ -9,8 +9,8 @@ using namespace std;
 int main() {
     setlocale(LC_ALL, "Russian");
 
-    // Часть1
-    // Проверка конструктора по умолчанию
+    // Р§Р°СЃС‚СЊ1
+    // РџСЂРѕРІРµСЂРєР° РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
     Element elem;
     vector<vector<int>> surface(5, vector<int>(7, 0));
 
@@ -19,7 +19,7 @@ int main() {
     assert(elem.getSurface() == surface);
 
 
-    // Проверка конструктора инициализации
+    // РџСЂРѕРІРµСЂРєР° РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
     vector<pair<int, int>> connectors1 = {{1, 2}, {1, 4}};
     vector<pair<int, int>> other_sockets1 = {{2, 2}, {2, 4}};
     Element elem1(connectors1, other_sockets1);
@@ -37,7 +37,7 @@ int main() {
     assert(elem1.getOtherSockets() == other_sockets1);
 
 
-    // Проверка конструктора копирования
+    // РџСЂРѕРІРµСЂРєР° РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РєРѕРїРёСЂРѕРІР°РЅРёСЏ
     Element elem1_copy(elem1);
 
     cout << "elem1_copy";
@@ -48,7 +48,7 @@ int main() {
     assert(elem1_copy.getOtherSockets() == other_sockets1);
 
 
-    // Проверка могут ли гнезда передаваемого объекта подключиться к соединителям текущего объекта
+    // РџСЂРѕРІРµСЂРєР° РјРѕРіСѓС‚ Р»Рё РіРЅРµР·РґР° РїРµСЂРµРґР°РІР°РµРјРѕРіРѕ РѕР±СЉРµРєС‚Р° РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє СЃРѕРµРґРёРЅРёС‚РµР»СЏРј С‚РµРєСѓС‰РµРіРѕ РѕР±СЉРµРєС‚Р°
     vector<pair<int, int>> connectors2 = {{1, 2}, {1, 4}, {2, 2}, {2, 4}};
     vector<pair<int, int>> other_sockets2 = {};
     Element elem2(connectors2, other_sockets2);
@@ -68,8 +68,8 @@ int main() {
     assert(!elem3.canConnect(elem2));
 
 
-    // Часть2
-    // Проверка конструктора по умолчанию
+    // Р§Р°СЃС‚СЊ2
+    // РџСЂРѕРІРµСЂРєР° РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
     SmartElement s_elem;
 
     assert(s_elem.getSurface() == surface);
@@ -78,7 +78,7 @@ int main() {
     assert(s_elem.getFunctional() == "Unknown");
 
 
-    // Проверка конструктора инициализации
+    // РџСЂРѕРІРµСЂРєР° РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
     vector<pair<int, int>> connectors4 = {{2, 6}, {3, 6}};
     vector<pair<int, int>> other_sockets4 = {{1, 6}};
     vector<vector<int>> surface4(5, vector<int>(7, 0));
@@ -98,7 +98,7 @@ int main() {
     assert(s_elem4.getFunctional() == "squeaker");
 
 
-    // Проверка конструктора копирования
+    // РџСЂРѕРІРµСЂРєР° РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР° РєРѕРїРёСЂРѕРІР°РЅРёСЏ
     SmartElement s_elem4_copy(s_elem4);
 
     cout << "s_elem4_copy";
@@ -137,7 +137,7 @@ int main() {
     assert(s_elem2_copy.getFunctional() == "Unknown");
 
 
-    // Проверка соединения
+    // РџСЂРѕРІРµСЂРєР° СЃРѕРµРґРёРЅРµРЅРёСЏ
     assert(s_elem2_copy.canConnect(s_elem1_copy));
     assert(!s_elem2_copy.canConnect(s_elem4));
     assert(s_elem2_copy.canConnect(elem3));
@@ -146,13 +146,13 @@ int main() {
     assert(elem2.canConnect(s_elem1_copy));
 
 
-    // Проверка идентификации элемента
+    // РџСЂРѕРІРµСЂРєР° РёРґРµРЅС‚РёС„РёРєР°С†РёРё СЌР»РµРјРµРЅС‚Р°
     cout << '\n';
     assert(!elem.isSmart());
     assert(s_elem4.isSmart());
     assert(s_elem1_copy.isSmart());
     assert(s_elem2_copy.isSmart());
 
-    cout << "\nВсе тесты успешно пройдены!\n";
+    cout << "\nР’СЃРµ С‚РµСЃС‚С‹ СѓСЃРїРµС€РЅРѕ РїСЂРѕР№РґРµРЅС‹!\n";
     return 0;
 }
