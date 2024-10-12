@@ -1,10 +1,8 @@
 #include "builder.h"
 #include <vector>
+#include <string>
 #include <iostream>
 using namespace std;
-
-// Инициализация статической переменной
-vector<vector<vector<int>>> Element::assembly;
 
 
 // Конструктор по умолчанию
@@ -34,9 +32,9 @@ Element::Element(const Element& el) {
 
 
 // Метод для проверки, могут ли гнезда передаваемого объекта подключиться к соединителям текущего объекта
-bool Element::canConnect(const Element& checked_el) const {
+bool Element::canConnect(const Element& checked_el, const string& message) const {
     if (connectors.size() == 0) {
-        cout << "Невозможно занять ни один соединитель текущего элемента, так как у него их нет!\n";
+        cout << "Невозможно занять ни один соединитель текущего элемента" << message << ", так как у него их нет!\n";
         return false;
     }
 
@@ -50,14 +48,14 @@ bool Element::canConnect(const Element& checked_el) const {
     }
 
     if (all_connectors) {
-        cout << "Возможно занять все соединители текущего элемента передаваемым элементом\n";
+        cout << "Возможно занять все соединители текущего элемента" << message << " передаваемым элементом\n";
         return true;
     }
     if (one_connector) {
-        cout << "Возможно занять часть соединителей текущего элемента передаваемым элементом\n";
+        cout << "Возможно занять часть соединителей текущего элемента" << message << " передаваемым элементом\n";
         return true;
     }
-    cout << "Невозможно занять ни один соединитель текущего элемента передаваемым элементом, проверьте индексы!\n";
+    cout << "Невозможно занять ни один соединитель текущего элемента" << message << " передаваемым элементом, проверьте индексы!\n";
     return false;
 }
 
@@ -81,20 +79,6 @@ bool Element::isSmart() const {
 } 
 
 
-void Element::printMatrices() {
-    for (size_t i = 0; i < assembly.size(); ++i) {
-        cout << "Matrix " << i + 1 << ":\n";
-        for (const vector<int>& row : assembly[i]) {
-            for (int val : row) {
-                cout << val << " ";
-            }
-            cout << "\n";
-        }
-        cout << "\n";
-    }
-}
-
-
 SmartElement::SmartElement() : Element(), functional("Unknown") {}
 
 
@@ -110,4 +94,62 @@ SmartElement::SmartElement(const Element& e) : SmartElement(e, "Unknown") {}
 bool SmartElement::isSmart() const {
     cout << "Эта детеаль умная. Её функциональность: " << functional << "\n";
     return true;
+}
+
+
+int Assembly::number_assembly = 0;
+
+
+Assembly::Assembly() {
+    if (!number_assembly)
+        name = "Assembly";
+    else
+        name = "Assembly" + to_string(number_assembly);
+    ++number_assembly;
+};
+
+
+void Assembly::addElement(const Element& e) {
+    string message = " сборки " + name;
+    if (elements.empty()) {
+        elements.push(e);
+        cout << "Успешно добавлен первый элемент в сборку " << name;
+    }
+    else if (elements.top().canConnect(e, message)) {
+        elements.push(e);
+        cout << "Поэтому элемент успешно добавлен в сброку " << name;
+    }
+    else {
+        cout << "Поэтому нельзя добавить данный элемент в сборку " << name;
+    }
+    cout << "\n\n";
+}
+
+
+void Assembly::printTopStack() const {
+    cout << "Stack top:" << "\n";
+    for (const vector<int>& row : elements.top().getSurface()) {
+        for (int val : row) {
+            cout << val << " ";
+        }
+        cout << "\n";
+    }
+    cout << "\n";
+}
+
+
+void Assembly::printAssemblyForNRow(const int row) {
+    stack<Element> elements_copy = elements;
+    cout << "Assembly for " << row << " row:" << "\n\n";
+    while (!elements_copy.empty()) {
+        for (int el : elements_copy.top().getSurface()[row]) {
+            if (!el)
+                cout << "  ";
+            else
+                cout << el  << " ";
+        }
+        cout << "\n";
+        elements_copy.pop();
+    }
+    cout << "\n";
 }

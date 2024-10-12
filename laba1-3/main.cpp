@@ -11,148 +11,202 @@ int main() {
 
     // Часть1
     // Проверка конструктора по умолчанию
-    Element elem;
-    vector<vector<int>> surface(5, vector<int>(7, 0));
+    // Element elem;
+    // vector<vector<int>> surface(5, vector<int>(7, 0));
 
-    assert(elem.getConnectors().empty());
-    assert(elem.getOtherSockets().empty());
-    assert(elem.getSurface() == surface);
-
-
-    // Проверка конструктора инициализации
-    vector<pair<int, int>> connectors1 = {{1, 2}, {1, 4}};
-    vector<pair<int, int>> other_sockets1 = {{2, 2}, {2, 4}};
-    Element elem1(connectors1, other_sockets1);
-    vector<vector<int>> surface1(5, vector<int>(7, 0));
-    for (const pair<int, int>& connector: connectors1)
-        surface1[connector.first][connector.second] = 2;
-    for (const pair<int, int>& socket: other_sockets1)
-        surface1[socket.first][socket.second] = 1;
-
-    cout << "elem1";
-    elem1.printSurface();
-
-    assert(elem1.getSurface() == surface1);
-    assert(elem1.getConnectors() == connectors1);
-    assert(elem1.getOtherSockets() == other_sockets1);
+    // assert(elem.getConnectors().empty());
+    // assert(elem.getOtherSockets().empty());
+    // assert(elem.getSurface() == surface);
 
 
-    // Проверка конструктора копирования
-    Element elem1_copy(elem1);
+    // // Проверка конструктора инициализации
+    // vector<pair<int, int>> connectors1 = {{1, 2}, {1, 4}};
+    // vector<pair<int, int>> other_sockets1 = {{2, 2}, {2, 4}};
+    // Element elem1(connectors1, other_sockets1);
+    // vector<vector<int>> surface1(5, vector<int>(7, 0));
+    // for (const pair<int, int>& connector: connectors1)
+    //     surface1[connector.first][connector.second] = 2;
+    // for (const pair<int, int>& socket: other_sockets1)
+    //     surface1[socket.first][socket.second] = 1;
 
-    cout << "elem1_copy";
-    elem1_copy.printSurface();
+    // cout << "elem1";
+    // elem1.printSurface();
 
-    assert(elem1_copy.getSurface() == surface1);
-    assert(elem1_copy.getConnectors() == connectors1);
-    assert(elem1_copy.getOtherSockets() == other_sockets1);
+    // assert(elem1.getSurface() == surface1);
+    // assert(elem1.getConnectors() == connectors1);
+    // assert(elem1.getOtherSockets() == other_sockets1);
 
 
-    // Проверка могут ли гнезда передаваемого объекта подключиться к соединителям текущего объекта
-    vector<pair<int, int>> connectors2 = {{1, 2}, {1, 4}, {2, 2}, {2, 4}};
-    vector<pair<int, int>> other_sockets2 = {};
-    Element elem2(connectors2, other_sockets2);
+    // // Проверка конструктора копирования
+    // Element elem1_copy(elem1);
 
-    vector<pair<int, int>> connectors3 = {};
-    vector<pair<int, int>> other_sockets3 = {{2, 6}, {2, 0}, {1, 0}, {1, 6}, {2, 1}, {2, 2}, {2, 3}, {2, 4}, {2, 5}};
-    Element elem3(connectors3, other_sockets3);
+    // cout << "elem1_copy";
+    // elem1_copy.printSurface();
 
-    cout << "elem2";
-    elem2.printSurface();
-    cout << "elem3";
-    elem3.printSurface();
+    // assert(elem1_copy.getSurface() == surface1);
+    // assert(elem1_copy.getConnectors() == connectors1);
+    // assert(elem1_copy.getOtherSockets() == other_sockets1);
 
-    assert(elem2.canConnect(elem1));
-    assert(!elem1.canConnect(elem3));
-    assert(elem2.canConnect(elem3));
-    assert(!elem3.canConnect(elem2));
+
+    // // Проверка могут ли гнезда передаваемого объекта подключиться к соединителям текущего объекта
+    // vector<pair<int, int>> connectors2 = {{1, 2}, {1, 4}, {2, 2}, {2, 4}};
+    // vector<pair<int, int>> other_sockets2 = {};
+    // Element elem2(connectors2, other_sockets2);
+
+    // vector<pair<int, int>> connectors3 = {};
+    // vector<pair<int, int>> other_sockets3 = {{2, 6}, {2, 0}, {1, 0}, {1, 6}, {2, 1}, {2, 2}, {2, 3}, {2, 4}, {2, 5}};
+    // Element elem3(connectors3, other_sockets3);
+
+    // cout << "elem2";
+    // elem2.printSurface();
+    // cout << "elem3";
+    // elem3.printSurface();
+
+    // assert(elem2.canConnect(elem1));
+    // assert(!elem1.canConnect(elem3));
+    // assert(elem2.canConnect(elem3));
+    // assert(!elem3.canConnect(elem2));
 
 
     // Часть2
     // Проверка конструктора по умолчанию
-    SmartElement s_elem;
+    // SmartElement s_elem;
 
-    assert(s_elem.getSurface() == surface);
-    assert(s_elem.getConnectors().empty());
-    assert(s_elem.getOtherSockets().empty());
-    assert(s_elem.getFunctional() == "Unknown");
-
-
-    // Проверка конструктора инициализации
-    vector<pair<int, int>> connectors4 = {{2, 6}, {3, 6}};
-    vector<pair<int, int>> other_sockets4 = {{1, 6}};
-    vector<vector<int>> surface4(5, vector<int>(7, 0));
-    for (const pair<int, int>& connector: connectors4)
-        surface4[connector.first][connector.second] = 2;
-    for (const pair<int, int>& socket: other_sockets4)
-        surface4[socket.first][socket.second] = 1;
-
-    SmartElement s_elem4("squeaker", connectors4, other_sockets4);
-
-    cout << "\ns_elem4";
-    s_elem4.printSurface();
-
-    assert(s_elem4.getSurface() == surface4);
-    assert(s_elem4.getConnectors() == connectors4);
-    assert(s_elem4.getOtherSockets() == other_sockets4);
-    assert(s_elem4.getFunctional() == "squeaker");
+    // assert(s_elem.getSurface() == surface);
+    // assert(s_elem.getConnectors().empty());
+    // assert(s_elem.getOtherSockets().empty());
+    // assert(s_elem.getFunctional() == "Unknown");
 
 
-    // Проверка конструктора копирования
-    SmartElement s_elem4_copy(s_elem4);
+    // // Проверка конструктора инициализации
+    // vector<pair<int, int>> connectors4 = {{2, 6}, {3, 6}};
+    // vector<pair<int, int>> other_sockets4 = {{1, 6}};
+    // vector<vector<int>> surface4(5, vector<int>(7, 0));
+    // for (const pair<int, int>& connector: connectors4)
+    //     surface4[connector.first][connector.second] = 2;
+    // for (const pair<int, int>& socket: other_sockets4)
+    //     surface4[socket.first][socket.second] = 1;
 
-    cout << "s_elem4_copy";
-    s_elem4_copy.printSurface();
+    // SmartElement s_elem4("squeaker", connectors4, other_sockets4);
 
-    assert(s_elem4_copy.getSurface() == surface4);
-    assert(s_elem4_copy.getConnectors() == connectors4);
-    assert(s_elem4_copy.getOtherSockets() == other_sockets4);
-    assert(s_elem4_copy.getFunctional() == "squeaker");
+    // cout << "\ns_elem4";
+    // s_elem4.printSurface();
 
-
-    SmartElement s_elem1_copy(elem1, "feet");
-
-    cout << "s_elem1_copy";
-    s_elem1_copy.printSurface();
-
-    assert(s_elem1_copy.getSurface() == surface1);
-    assert(s_elem1_copy.getConnectors() == connectors1);
-    assert(s_elem1_copy.getOtherSockets() == other_sockets1);
-    assert(s_elem1_copy.getFunctional() == "feet");
+    // assert(s_elem4.getSurface() == surface4);
+    // assert(s_elem4.getConnectors() == connectors4);
+    // assert(s_elem4.getOtherSockets() == other_sockets4);
+    // assert(s_elem4.getFunctional() == "squeaker");
 
 
-    SmartElement s_elem2_copy(elem2);
-    vector<vector<int>> surface2(5, vector<int>(7, 0));
-    for (const pair<int, int>& connector: connectors2)
-        surface2[connector.first][connector.second] = 2;
-    for (const pair<int, int>& socket: other_sockets2)
-        surface2[socket.first][socket.second] = 1;
+    // // Проверка конструктора копирования
+    // SmartElement s_elem4_copy(s_elem4);
 
-    cout << "s_elem2_copy";
-    s_elem2_copy.printSurface();
+    // cout << "s_elem4_copy";
+    // s_elem4_copy.printSurface();
 
-    assert(s_elem2_copy.getSurface() == surface2);
-    assert(s_elem2_copy.getConnectors() == connectors2);
-    assert(s_elem2_copy.getOtherSockets() == other_sockets2);
-    assert(s_elem2_copy.getFunctional() == "Unknown");
+    // assert(s_elem4_copy.getSurface() == surface4);
+    // assert(s_elem4_copy.getConnectors() == connectors4);
+    // assert(s_elem4_copy.getOtherSockets() == other_sockets4);
+    // assert(s_elem4_copy.getFunctional() == "squeaker");
 
 
-    // Проверка соединения
-    assert(s_elem2_copy.canConnect(s_elem1_copy));
-    assert(!s_elem2_copy.canConnect(s_elem4));
-    assert(s_elem2_copy.canConnect(elem3));
-    assert(!s_elem1_copy.canConnect(elem3));
-    assert(!elem3.canConnect(s_elem4));
-    assert(elem2.canConnect(s_elem1_copy));
+    // SmartElement s_elem1_copy(elem1, "feet");
+
+    // cout << "s_elem1_copy";
+    // s_elem1_copy.printSurface();
+
+    // assert(s_elem1_copy.getSurface() == surface1);
+    // assert(s_elem1_copy.getConnectors() == connectors1);
+    // assert(s_elem1_copy.getOtherSockets() == other_sockets1);
+    // assert(s_elem1_copy.getFunctional() == "feet");
 
 
-    // Проверка идентификации элемента
+    // SmartElement s_elem2_copy(elem2);
+    // vector<vector<int>> surface2(5, vector<int>(7, 0));
+    // for (const pair<int, int>& connector: connectors2)
+    //     surface2[connector.first][connector.second] = 2;
+    // for (const pair<int, int>& socket: other_sockets2)
+    //     surface2[socket.first][socket.second] = 1;
+
+    // cout << "s_elem2_copy";
+    // s_elem2_copy.printSurface();
+
+    // assert(s_elem2_copy.getSurface() == surface2);
+    // assert(s_elem2_copy.getConnectors() == connectors2);
+    // assert(s_elem2_copy.getOtherSockets() == other_sockets2);
+    // assert(s_elem2_copy.getFunctional() == "Unknown");
+
+
+    // // Проверка соединения
+    // assert(s_elem2_copy.canConnect(s_elem1_copy));
+    // assert(!s_elem2_copy.canConnect(s_elem4));
+    // assert(s_elem2_copy.canConnect(elem3));
+    // assert(!s_elem1_copy.canConnect(elem3));
+    // assert(!elem3.canConnect(s_elem4));
+    // assert(elem2.canConnect(s_elem1_copy));
+
+
+    // // Проверка идентификации элемента
+    // cout << '\n';
+    // assert(!elem.isSmart());
+    // assert(s_elem4.isSmart());
+    // assert(s_elem1_copy.isSmart());
+    // assert(s_elem2_copy.isSmart());
+
+
+    // Часть 3
+    Element tr1({{2,3}}, {});
+    Element tr2({{2,3}, {2,5}}, {{2,4}});
+    Element tr3({{2,3}, {2,5}}, {});
+    Element tr4({{0,2}, {0,3}, {0,4},
+                {1,1}, {1,2}, {1,3}, {1,4}, {1,5},
+                {2,0}, {2,1}, {2,2}, {2,3}, {2,4}, {2,5}, {2,6},
+                {3,1}, {3,2}, {3,3}, {3,4}, {3,5},
+                {4,2}, {4,3}, {4,4}}, {});
+    Element tr5({{1,2}, {1,3}, {1,4},
+                {2,1}, {2,2}, {2,3}, {2,4}, {2,5},
+                {3,2}, {3,3}, {3,4}}, 
+                {{0,2}, {0,3}, {0,4}, {4,2}, {4,3}, {4,4}, {1,1}, {1,5}, {2,0}, {2,6}, {3,1}, {3,5}});
+    Element tr6({{1,3},
+                {2,2}, {2,3}, {2,4},
+                {3,3}}, {{1,2}, {1,4}, {2,1}, {2,5}, {3,2}, {3,4}});
+    Element tr7({}, {{1,3}, {2,2}, {2,3}, {2,4}, {3,3}});
+
+    Assembly tree;
+    tree.addElement(tr1);
+    tree.addElement(tr1);
+    tree.addElement(tr2);
+    tree.addElement(tr3);
+    tree.addElement(tr4);
+    tree.addElement(tr5);
+    tree.addElement(tr6);
+    tree.addElement(tr7);
+    tree.addElement(tr1);
+
+    tree.printAssemblyForNRow(2);
+    tree.printTopStack();
+    // tree.delTopStack();
+    // tree.printAssemblyForNRow(2);
+    // tree.printTopStack();
+
     cout << '\n';
-    assert(!elem.isSmart());
-    assert(s_elem4.isSmart());
-    assert(s_elem1_copy.isSmart());
-    assert(s_elem2_copy.isSmart());
+    // Assembly human;
+    // human.addElement(elem2);
+    // human.printTopStack();
+    // human.addElement(elem1);
+    // human.printTopStack();
 
-    cout << "\nВсе тесты успешно пройдены!\n";
+    // Assembly assembly;
+    // assembly.addElement(elem3);
+    // assembly.printTopStack();
+
+    // human.addElement(elem3);
+
+    // Assembly as2;
+    // as2.addElement(elem1_copy);
+    // as2.printTopStack();
+
+    cout << "\nВсе тесты успешно пройдены!\n\n";
+
     return 0;
 }

@@ -3,13 +3,13 @@
 
 #include <vector>
 #include <string>
+#include <stack>
 using namespace std;
 
 class Element {
 private:
     static const int ROW = 5;
-    static const int COL = 7;
-    static vector<vector<vector<int>>> assembly;  // трехмерная сборка  
+    static const int COL = 7; 
     vector<vector<int>> surface;  // рабочая поверхность
     vector<pair<int, int>> connectors;  // индексы гнезд и соединителей
     vector<pair<int, int>> other_sockets; // индексы остальной конструкции (в ней обязаны быть гнезда)
@@ -24,7 +24,7 @@ public:
     Element(const Element& el);
 
     // Метод для проверки, могут ли гнезда передаваемого объекта подключиться к соединителям текущего объекта
-    bool canConnect (const Element& checked_el) const;
+    bool canConnect(const Element& checked_el, const string& name = "") const;
 
     // Метод для отображения поверхности
     void printSurface() const;
@@ -36,8 +36,6 @@ public:
     vector<vector<int>> getSurface() const {return surface;}
     vector<pair<int, int>> getConnectors() const {return connectors;}
     vector<pair<int, int>> getOtherSockets() const {return other_sockets;}
-
-    static void printMatrices();
 };
 
 
@@ -58,5 +56,22 @@ public:
     // Геттер
     string getFunctional() const {return functional;}
 };
+
+
+class Assembly {
+private:
+    stack<Element> elements;  // трехмерная сборка
+    string name;
+    static int number_assembly;
+public:
+    Assembly();
+    Assembly(const string& input_name) : name(input_name) {};
+
+    void addElement(const Element& e);
+    void printTopStack() const;
+    void delTopStack() {elements.pop();}
+    void printAssemblyForNRow(const int row);
+};
+
 
 #endif
