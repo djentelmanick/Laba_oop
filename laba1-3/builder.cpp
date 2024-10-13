@@ -1,6 +1,7 @@
 #include "builder.h"
 #include <vector>
 #include <string>
+#include <stack>
 #include <iostream>
 using namespace std;
 
@@ -73,8 +74,9 @@ void Element::printSurface() const {
 }
 
 
-bool Element::isSmart() const {
-    cout << "Эта деталь обычная\n";
+bool Element::isSmart(int print_sent) const {
+    if (print_sent)
+        cout << "Эта деталь обычная\n";
     return false;
 } 
 
@@ -91,8 +93,9 @@ SmartElement::SmartElement(const Element& e, const string& func) : Element(e), f
 SmartElement::SmartElement(const Element& e) : SmartElement(e, "Unknown") {}
 
 
-bool SmartElement::isSmart() const {
-    cout << "Эта детеаль умная. Её функциональность: " << functional << "\n";
+bool SmartElement::isSmart(int print_sent) const {
+    if (print_sent)
+        cout << "Эта детеаль умная. Её функциональность: " << functional << "\n";
     return true;
 }
 
@@ -109,14 +112,40 @@ Assembly::Assembly() {
 };
 
 
-void Assembly::addElement(const Element& e) {
+Assembly::Assembly(Assembly& assembly) {
+    name = assembly.name;
+
+    stack<unique_ptr<Element>> temp_stack_ptr;
+    stack<Element> temp_stack;
+    while (!assembly.elements.empty()) {
+        temp_stack.push(*assembly.elements.top());
+        temp_stack_ptr.push(move(assembly.elements.top()));
+        assembly.elements.pop();
+    }
+
+    while (!temp_stack.empty()) {
+        if (temp_stack.top().isSmart(0))
+            elements.push(make_unique<SmartElement>(temp_stack.top()));
+        else
+            elements.push(make_unique<Element>(temp_stack.top()));
+        temp_stack.pop();
+    }
+
+    while (!temp_stack_ptr.empty()) {
+        assembly.elements.push(move(temp_stack_ptr.top()));
+        temp_stack_ptr.pop();
+    }
+}
+
+
+void Assembly::addElement(unique_ptr<Element> e) {
     string message = " сборки " + name;
     if (elements.empty()) {
-        elements.push(e);
+        elements.push(move(e));
         cout << "Успешно добавлен первый элемент в сборку " << name;
     }
-    else if (elements.top().canConnect(e, message)) {
-        elements.push(e);
+    else if (elements.top()->canConnect(*e, message)) {
+        elements.push(move(e));
         cout << "Поэтому элемент успешно добавлен в сброку " << name;
     }
     else {
@@ -127,8 +156,13 @@ void Assembly::addElement(const Element& e) {
 
 
 void Assembly::printTopStack() const {
+    if (elements.empty()) {
+        cout << "Stack is empty!" << "\n";
+        return;
+    }
+    
     cout << "Stack top:" << "\n";
-    for (const vector<int>& row : elements.top().getSurface()) {
+    for (const vector<int>& row : elements.top()->getSurface()) {
         for (int val : row) {
             cout << val << " ";
         }
@@ -138,18 +172,58 @@ void Assembly::printTopStack() const {
 }
 
 
-void Assembly::printAssemblyForNRow(const int row) {
-    stack<Element> elements_copy = elements;
+void Assembly::printAssemblyForNRow(const int row){
+    stack<unique_ptr<Element>> temp_stack;
+
     cout << "Assembly for " << row << " row:" << "\n\n";
-    while (!elements_copy.empty()) {
-        for (int el : elements_copy.top().getSurface()[row]) {
-            if (!el)
+    while (!elements.empty()) {
+        for (int val : elements.top()->getSurface()[row]) {
+            if (!val)
                 cout << "  ";
             else
-                cout << el  << " ";
+                cout << val  << " ";
         }
         cout << "\n";
-        elements_copy.pop();
+        temp_stack.push(move(elements.top()));
+        elements.pop();
     }
     cout << "\n";
+
+    while (!temp_stack.empty()) {
+        elements.push(move(temp_stack.top()));
+        temp_stack.pop();
+    }
 }
+
+
+void Assembly::printElementsSurface() {
+    cout << "\nВсе элементы сборки " << name << ":\n\n";
+    stack<unique_ptr<Element>> temp_stack;
+
+    while(!elements.empty()) {
+        elements.top()->isSmart();
+        elements.top()->printSurface();
+        temp_stack.push(move(elements.top()));
+        elements.pop();
+    }
+
+    while (!temp_stack.empty()) {
+        elements.push(move(temp_stack.top()));
+        temp_stack.pop();
+    }
+}
+
+
+// bool Assembly::stackComparison(const stack<unique_ptr<Element>>& s) const {
+    // if (elements.size() != s.size())
+    //     return false;
+
+    // stack<unique_ptr<Element>> temp_elements = elements;
+    // while (!temp_elements.empty()) {
+    //     if (temp_elements.top()->getSurface() != s.top()->getSurface())
+    //         return false;
+    //     temp_elements.pop();
+    //     // s.pop();
+    // }
+    // return true;
+// }

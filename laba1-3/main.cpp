@@ -4,6 +4,7 @@
 #include "builder.h"
 #include <string>
 #include <assert.h>
+#include <memory>
 using namespace std;
 
 int main() {
@@ -12,7 +13,7 @@ int main() {
     // Часть1
     // Проверка конструктора по умолчанию
     // Element elem;
-    // vector<vector<int>> surface(5, vector<int>(7, 0));
+    vector<vector<int>> surface(5, vector<int>(7, 0));
 
     // assert(elem.getConnectors().empty());
     // assert(elem.getOtherSockets().empty());
@@ -20,17 +21,17 @@ int main() {
 
 
     // // Проверка конструктора инициализации
-    // vector<pair<int, int>> connectors1 = {{1, 2}, {1, 4}};
-    // vector<pair<int, int>> other_sockets1 = {{2, 2}, {2, 4}};
-    // Element elem1(connectors1, other_sockets1);
-    // vector<vector<int>> surface1(5, vector<int>(7, 0));
-    // for (const pair<int, int>& connector: connectors1)
-    //     surface1[connector.first][connector.second] = 2;
-    // for (const pair<int, int>& socket: other_sockets1)
-    //     surface1[socket.first][socket.second] = 1;
+    vector<pair<int, int>> connectors1 = {{1, 2}, {1, 4}};
+    vector<pair<int, int>> other_sockets1 = {{2, 2}, {2, 4}};
+    Element elem1(connectors1, other_sockets1);
+    vector<vector<int>> surface1(5, vector<int>(7, 0));
+    for (const pair<int, int>& connector: connectors1)
+        surface1[connector.first][connector.second] = 2;
+    for (const pair<int, int>& socket: other_sockets1)
+        surface1[socket.first][socket.second] = 1;
 
-    // cout << "elem1";
-    // elem1.printSurface();
+    cout << "elem1";
+    elem1.printSurface();
 
     // assert(elem1.getSurface() == surface1);
     // assert(elem1.getConnectors() == connectors1);
@@ -49,16 +50,16 @@ int main() {
 
 
     // // Проверка могут ли гнезда передаваемого объекта подключиться к соединителям текущего объекта
-    // vector<pair<int, int>> connectors2 = {{1, 2}, {1, 4}, {2, 2}, {2, 4}};
-    // vector<pair<int, int>> other_sockets2 = {};
-    // Element elem2(connectors2, other_sockets2);
+    vector<pair<int, int>> connectors2 = {{1, 2}, {1, 4}, {2, 2}, {2, 4}};
+    vector<pair<int, int>> other_sockets2 = {};
+    Element elem2(connectors2, other_sockets2);
 
     // vector<pair<int, int>> connectors3 = {};
     // vector<pair<int, int>> other_sockets3 = {{2, 6}, {2, 0}, {1, 0}, {1, 6}, {2, 1}, {2, 2}, {2, 3}, {2, 4}, {2, 5}};
     // Element elem3(connectors3, other_sockets3);
 
-    // cout << "elem2";
-    // elem2.printSurface();
+    cout << "elem2";
+    elem2.printSurface();
     // cout << "elem3";
     // elem3.printSurface();
 
@@ -79,15 +80,15 @@ int main() {
 
 
     // // Проверка конструктора инициализации
-    // vector<pair<int, int>> connectors4 = {{2, 6}, {3, 6}};
-    // vector<pair<int, int>> other_sockets4 = {{1, 6}};
-    // vector<vector<int>> surface4(5, vector<int>(7, 0));
-    // for (const pair<int, int>& connector: connectors4)
-    //     surface4[connector.first][connector.second] = 2;
-    // for (const pair<int, int>& socket: other_sockets4)
-    //     surface4[socket.first][socket.second] = 1;
+    vector<pair<int, int>> connectors4 = {{2, 6}, {3, 6}};
+    vector<pair<int, int>> other_sockets4 = {{1, 6}};
+    vector<vector<int>> surface4(5, vector<int>(7, 0));
+    for (const pair<int, int>& connector: connectors4)
+        surface4[connector.first][connector.second] = 2;
+    for (const pair<int, int>& socket: other_sockets4)
+        surface4[socket.first][socket.second] = 1;
 
-    // SmartElement s_elem4("squeaker", connectors4, other_sockets4);
+    SmartElement s_elem4("squeaker", connectors4, other_sockets4);
 
     // cout << "\ns_elem4";
     // s_elem4.printSurface();
@@ -155,7 +156,70 @@ int main() {
 
 
     // Часть 3
-    Element tr1({{2,3}}, {});
+    // Проверка конструктора по умолчанию
+    cout << '\n';
+    Assembly character;
+    stack<Element> stack_el;
+
+    assert(character.getTopStack().getSurface() == surface);
+    assert(character.getName() == "Assembly");
+    assert(character.getNumberAssembly() == 1);
+
+
+    // Проверка статической переменной для создания имени сборки по умолчанию и самого имени
+    Assembly assembly;
+
+    assert(assembly.getName() == "Assembly1");
+    assert(assembly.getNumberAssembly() == 2);
+    assembly.addElement(make_unique<SmartElement>(s_elem4));  // Показываем соответсвтующие сообщения при добавлении элемента
+    assembly.addElement(make_unique<SmartElement>(s_elem4));
+
+
+    // Проверка конструктора инициализации
+    Assembly tree("tree");
+
+    assert(tree.getName() == "tree");
+
+
+    // Проверка добавления и удаления элемента элемента
+    character.addElement(make_unique<Element>(elem2));
+    stack_el.push(elem2);
+
+    assert(character.getTopStack().getSurface() == stack_el.top().getSurface());
+    character.printTopStack();
+    
+    character.addElement(make_unique<Element>(elem1));
+    stack_el.push(elem1);
+
+    assert(character.getTopStack().getSurface() == stack_el.top().getSurface());
+    character.printTopStack();
+
+    character.addElement(make_unique<SmartElement>(s_elem4));
+    character.printTopStack();
+
+    character.addElement(make_unique<Element>(elem2));
+    stack_el.push(elem2);
+    assert(character.getTopStack().getSurface() == stack_el.top().getSurface());
+
+    character.delTopStack();
+    stack_el.pop();
+    assert(character.getTopStack().getSurface() == stack_el.top().getSurface());
+    character.printTopStack();
+
+
+    // Проверка конструктора копирования
+    Assembly character_copy(character);
+
+    assert(character_copy.getTopStack().getSurface() == surface1);
+    assert(character_copy.getName() == character.getName());
+    assert(character_copy.getNumberAssembly() == 2);
+    character_copy.printElementsSurface();
+    character.printElementsSurface();
+
+
+    // // Пример использования
+    cout << "\n\n" << "Создание сборки \"дерево\"" << "\n\n\n";
+    SmartElement tr1("stump", {{2,3}}, {});
     Element tr2({{2,3}, {2,5}}, {{2,4}});
     Element tr3({{2,3}, {2,5}}, {});
     Element tr4({{0,2}, {0,3}, {0,4},
@@ -172,41 +236,23 @@ int main() {
                 {3,3}}, {{1,2}, {1,4}, {2,1}, {2,5}, {3,2}, {3,4}});
     Element tr7({}, {{1,3}, {2,2}, {2,3}, {2,4}, {3,3}});
 
-    Assembly tree;
-    tree.addElement(tr1);
-    tree.addElement(tr1);
-    tree.addElement(tr2);
-    tree.addElement(tr3);
-    tree.addElement(tr4);
-    tree.addElement(tr5);
-    tree.addElement(tr6);
-    tree.addElement(tr7);
-    tree.addElement(tr1);
+    tree.addElement(make_unique<SmartElement>(tr1));
+    tree.addElement(make_unique<SmartElement>(tr1));
+    tree.addElement(make_unique<Element>(tr2));
+    tree.addElement(make_unique<Element>(tr3));
+    tree.addElement(make_unique<Element>(tr4));
+    tree.addElement(make_unique<Element>(tr5));
+    tree.addElement(make_unique<Element>(tr6));
+    tree.addElement(make_unique<Element>(tr7));
+    tree.addElement(make_unique<SmartElement>(tr1));
 
     tree.printAssemblyForNRow(2);
+    tree.printAssemblyForNRow(3);
+    tree.printElementsSurface();
     tree.printTopStack();
-    // tree.delTopStack();
-    // tree.printAssemblyForNRow(2);
-    // tree.printTopStack();
 
-    cout << '\n';
-    // Assembly human;
-    // human.addElement(elem2);
-    // human.printTopStack();
-    // human.addElement(elem1);
-    // human.printTopStack();
 
-    // Assembly assembly;
-    // assembly.addElement(elem3);
-    // assembly.printTopStack();
-
-    // human.addElement(elem3);
-
-    // Assembly as2;
-    // as2.addElement(elem1_copy);
-    // as2.printTopStack();
-
-    cout << "\nВсе тесты успешно пройдены!\n\n";
+    cout << "\n" << "Все тесты успешно пройдены!" << "\n\n";
 
     return 0;
 }
